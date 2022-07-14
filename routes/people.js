@@ -88,7 +88,20 @@ router.get('/new/', (req, res) => {
 //   2. Redirecionar para a rota de listagem de pessoas
 //      - Em caso de sucesso do INSERT, colocar uma mensagem feliz
 //      - Em caso de erro do INSERT, colocar mensagem vermelhinha
+router.post("/",async (req,res,next) => {
+  const {name} = req.body;
 
+  try{
+    const [result] = await db.query("insert into person (name) values (?)",[name]);
+    console.log(result);
+    req.flash('success',"Pessoa adicionada com sucesso");
+  }catch(erro){
+    req.flash('error',`Erro desconhecido. Descrição: ${error}`);
+  }finally{
+    res.redirect("/people");
+  }
+  
+});
 
 /* DELETE uma pessoa */
 // Exercício 2: IMPLEMENTAR AQUI
@@ -97,6 +110,19 @@ router.get('/new/', (req, res) => {
 //   2. Redirecionar para a rota de listagem de pessoas
 //      - Em caso de sucesso do INSERT, colocar uma mensagem feliz
 //      - Em caso de erro do INSERT, colocar mensagem vermelhinha
+router.delete("/:id",async (req,res,next) => {
+  const id = req.params.id;
 
+  try{
+    const [result] = await db.query("delete from person where id=? ",[id]);
+    console.log(result);
+    req.flash('success',"Pessoa removida com sucesso");
+  }catch(erro){
+    req.flash('error',`Erro desconhecido. Descrição: ${error}`);
+  }finally{
+    res.redirect("/people");
+  }
+  
+});
 
 export default router
